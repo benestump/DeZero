@@ -1,3 +1,5 @@
+import numpy as np
+
 def as_array(x):
     if np.isscalar(x):
         return np.array(x)
@@ -63,7 +65,7 @@ class Exp(Function):
         return gx
 
 
-def neumerical_diff(f:Function, x:Variable, eps=1e-4):
+def numerical_diff(f:Function, x:Variable, eps=1e-4):
     x0 = Variable(x.data - eps)
     x1 = Variable(x.data + eps)
     y0 = f(x0)
@@ -75,5 +77,4 @@ def square(x):
 
 def exp(x):
     return Exp()(x)
-
 
