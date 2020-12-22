@@ -31,7 +31,7 @@ class Variable:
                 funcs.append(x.creatro)
 
 class Function:
-    def __call__(self, inputs) -> Variable:
+    def __call__(self, *inputs) -> Variable:
         xs = [x.data for x in inputs]
         ys = self.forward(xs)
         outputs = [Variable(as_array(y)) for y in ys]
@@ -40,7 +40,7 @@ class Function:
             output.set_creator(self)
         self.inputs = inputs
         self.outputs = outputs
-        return outputs
+        return outputs if len(outputs) > 1 else output[0]
 
     def forward(self, xs):
         raise NotImplementedError()
@@ -49,7 +49,7 @@ class Function:
         raise NotImplementedError()
 
 class Add(Function):
-    def forward(selfself, xs):
+    def forward(self, xs):
         x0, x1 = xs
         y = x0 + x1
         return (y,)
