@@ -33,7 +33,9 @@ class Variable:
 class Function:
     def __call__(self, *inputs) -> Variable:
         xs = [x.data for x in inputs]
-        ys = self.forward(xs)
+        ys = self.forward(*xs)
+        if not isinstance(ys, tuple):
+            ys = (ys,)
         outputs = [Variable(as_array(y)) for y in ys]
 
         for output in outputs:
@@ -49,10 +51,19 @@ class Function:
         raise NotImplementedError()
 
 class Add(Function):
-    def forward(self, xs):
-        x0, x1 = xs
+    def forward(self, x0, x1):
         y = x0 + x1
-        return (y,)
+        return y
+
+class Mul(Function):
+    def forward(self, x0, x1):
+        y = x0 * x1
+        return y
+
+class Div(Function):
+    def forward(self, x0, x1):
+        y = x0 / x1
+        return y
 
 class Square(Function):
     def forward(self, x) :
@@ -85,4 +96,8 @@ def square(x):
 
 def exp(x):
     return Exp()(x)
+
+def add(x0, x1):
+    return Add()(x0, x1)
+
 
