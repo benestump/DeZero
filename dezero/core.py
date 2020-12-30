@@ -42,6 +42,12 @@ class Variable:
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return 'variable(' + p + ')'
 
+    def __mul__(self, other):
+        return mul(self, other)
+
+    def __add__(self, other):
+        return add(self, other)
+
     @property
     def shape(self):
         return self.data.shape
@@ -96,6 +102,7 @@ class Variable:
     def cleargrad(self):
         self.grad = None
 
+
 class Function:
     def __call__(self, *inputs) -> Variable:
         xs = [x.data for x in inputs]
@@ -132,6 +139,10 @@ class Mul(Function):
     def forward(self, x0, x1):
         y = x0 * x1
         return y
+
+    def backward(self, gy):
+        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        return gy * x1, gy * x0
 
 class Div(Function):
     def forward(self, x0, x1):
@@ -172,3 +183,7 @@ def exp(x):
 
 def add(x0, x1):
     return Add()(x0, x1)
+
+def mul(x0, x1):
+    return Mul()(x0, x1)
+
