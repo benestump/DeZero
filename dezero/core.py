@@ -22,15 +22,37 @@ def as_array(x):
         return np.array(x)
     return x
 class Variable:
-    def __init__(self, data):
+    def __init__(self, data, name=None):
         if data is not None:
             if not isinstance(data, np.ndarray):
                 raise TypeError(f'{type(data)} is not supported.')
 
         self.data = data
+        self.name = name
         self.grad = None
         self.creator = None
         self.generation = 0
+
+    def __len__(self):
+        return len(self.data)
+
+    def __repr__(self):
+        if self.data is None:
+            return 'variable(None)'
+        p = str(self.data).replace('\n', '\n' + ' ' * 9)
+        return 'variable(' + p + ')'
+
+    @property
+    def shape(self):
+        return self.data.shape
+
+    @property
+    def size(self):
+        return self.data.size
+
+    @property
+    def dtype(self):
+        return self.data.dtype
 
     def set_creator(self, func):
         self.creator = func
@@ -150,8 +172,3 @@ def exp(x):
 
 def add(x0, x1):
     return Add()(x0, x1)
-
-for i in range(10):
-    x = Variable(np.random.randn(10000))
-    y = square(square(square(x)))
-
