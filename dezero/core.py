@@ -2,6 +2,11 @@ import weakref
 import numpy as np
 import contextlib
 
+def as_variable(obj):
+    if isinstance(obj, Variable):
+        return obj
+    return Variable(obj)
+
 @contextlib.contextmanager
 def using_config(name, value):
     old_value = getattr(Config, name)
@@ -21,7 +26,9 @@ def as_array(x):
     if np.isscalar(x):
         return np.array(x)
     return x
+
 class Variable:
+    __array_priority__ = 200
     def __init__(self, data, name=None):
         if data is not None:
             if not isinstance(data, np.ndarray):
@@ -45,7 +52,13 @@ class Variable:
     def __mul__(self, other):
         return mul(self, other)
 
+    def __rmul__(self, other):
+        return mul(self, other)
+
     def __add__(self, other):
+        return add(self, other)
+
+    def __radd__(self, other):
         return add(self, other)
 
     @property
@@ -105,6 +118,8 @@ class Variable:
 
 class Function:
     def __call__(self, *inputs) -> Variable:
+        inputs = [as_variable(x) for x in inputs]
+
         xs = [x.data for x in inputs]
         ys = self.forward(*xs)
         if not isinstance(ys, tuple):
@@ -182,8 +197,9 @@ def exp(x):
     return Exp()(x)
 
 def add(x0, x1):
+    x1 = as_array(x1)
     return Add()(x0, x1)
 
 def mul(x0, x1):
+    x1 = as_array(x1)
     return Mul()(x0, x1)
-
