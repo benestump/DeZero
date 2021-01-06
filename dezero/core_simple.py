@@ -49,36 +49,35 @@ class Variable:
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return 'variable(' + p + ')'
 
-    def __mul__(self, other):
-        return mul(self, other)
-
-    def __rmul__(self, other):
-        return mul(self, other)
-
-    def __add__(self, other):
-        return add(self, other)
-
-    def __radd__(self, other):
-        return add(self, other)
-
-    def __neg__(self):
-        return neg(self)
-
-    def __sub__(self, other):
-        return sub(self, other)
-
-    def __rsub__(self, other):
-        return rsub(self, other)
-
-    def __truediv__(self, other):
-        return div(self, other)
-
-    def __rtruediv__(self, other):
-        return rdiv(self, other)
-
-    def __pow__(self, other):
-        return pow(self, other)
-
+    # def __mul__(self, other):
+    #     return mul(self, other)
+    #
+    # def __rmul__(self, other):
+    #     return mul(self, other)
+    #
+    # def __add__(self, other):
+    #     return add(self, other)
+    #
+    # def __radd__(self, other):
+    #     return add(self, other)
+    #
+    # def __neg__(self):
+    #     return neg(self)
+    #
+    # def __sub__(self, other):
+    #     return sub(self, other)
+    #
+    # def __rsub__(self, other):
+    #     return rsub(self, other)
+    #
+    # def __truediv__(self, other):
+    #     return div(self, other)
+    #
+    # def __rtruediv__(self, other):
+    #     return rdiv(self, other)
+    #
+    # def __pow__(self, other):
+    #     return pow(self, other)
     @property
     def shape(self):
         return self.data.shape
@@ -133,6 +132,18 @@ class Variable:
     def cleargrad(self):
         self.grad = None
 
+def setup__variable():
+
+    Variable.__add__ = add
+    Variable.__radd__= add
+    Variable.__mul__ = mul
+    Variable.__rmul__ = mul
+    Variable.__neg__= neg
+    Variable.__sub__ = sub
+    Variable.__rsub__ = rsub
+    Variable.__truediv__ = div
+    Variable.__rtruediv__ = rdiv
+    Variable.__pow__ = pow
 
 class Function:
     def __call__(self, *inputs) -> Variable:
@@ -202,6 +213,7 @@ class Pow(Function):
     def forward(self, x):
         y = x ** self.c
         return y
+
     def backward(self, gy):
         x = self.inputs[0].data
         c = self.c
@@ -276,7 +288,3 @@ def rdiv(x0, x1):
 
 def pow(x, c):
     return Pow(c)(x)
-
-x = Variable(np.array(2.0))
-y = x ** 3
-print(y)
