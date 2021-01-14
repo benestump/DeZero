@@ -1,4 +1,4 @@
-is_simple_core = True
+is_simple_core = False
 
 if is_simple_core:
     from dezero.core_simple import Variable
@@ -10,7 +10,7 @@ if is_simple_core:
     from dezero.core_simple import setup__variable
 
 else:
-    from dezero.core import Variabel
+    from dezero.core import Variable
     from dezero.core import Function
     from dezero.core import using_config
     from dezero.core import no_grad
